@@ -1,7 +1,7 @@
 package routers
 
 import (
-	_ "Webgroup/controllers"
+	"Webgroup/controllers"
 	"Webgroup/controllers/admin"
 
 	"github.com/astaxie/beego"
@@ -9,9 +9,8 @@ import (
 
 func init() {
 
-	//beego.Router("/", &controllers.IndexController{})
-
-	//beego.AutoRouter(&controllers.IndexController{})
+	beego.AutoRouter(&controllers.DomainController{})
+	beego.AutoRouter(&controllers.FilesController{})
 
 	/*********************系统路由********************************/
 

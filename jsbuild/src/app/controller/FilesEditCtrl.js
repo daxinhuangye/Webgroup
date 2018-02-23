@@ -67,10 +67,11 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
 
 	/***********************数据定义*****************************/
 	$scope.attrDef = [
-		{"Key":"Domain", "Title":"标题", "InputType":"text", "Required":"true"},
-		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
+		{"Key":"Title", "Title":"标题", "InputType":"text", "Required":"true"},
 		{"Key":"Content", "Title":"内容", "InputType":"ueditor", "Required":"false", "Config":$scope._simpleConfig},
-		{"Key":"Status", "Title":"状态", "InputType":"radio", "Required":"true",  "Value":[[1,"草稿"],[2,"发布"]]},
+		{"Key":"Type", "Title":"类型", "InputType":"radio", "Required":"true",  "Value":[[1,"HTML"],[2,"图片"]]},
+		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
+		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
 
 	];	
 	
