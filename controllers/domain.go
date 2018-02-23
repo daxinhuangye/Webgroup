@@ -50,6 +50,8 @@ func (this *DomainController) Check() {
 //屏蔽IP列表
 func (this *DomainController) List() {
 
+	beego.Trace(models.Depth)
+	models.Depth = true
 	Keyword := this.GetString("Keyword")
 	Page, _ := this.GetInt64("Page")
 	PageSize, _ := this.GetInt64("PageSize")

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Webgroup/models"
 	_ "Webgroup/routers"
 	"tsEngine/tsDb"
 
@@ -29,6 +30,8 @@ func main() {
 
 	//数据库连接
 	tsDb.ConnectDb()
+	models.Depth = false
+	go models.WebCheck()
 
 	beego.Run()
 }
