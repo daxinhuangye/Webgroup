@@ -8,12 +8,14 @@ import (
 
 //用户表模型
 type Files struct {
-	Id      int64
-	Title   string
-	Content string
-	Time    uint64
-	Sort    int64
-	State   int64
+	Id          int64
+	Title       string
+	Keywords    string
+	Description string
+	Content     string
+	Time        uint64
+	Sort        int64
+	State       int64
 }
 
 func init() {
@@ -31,7 +33,7 @@ func (this *Files) List(page int64, page_size int64, keyword string) (data []orm
 	op := orm.NewOrm().QueryTable(this)
 
 	if keyword != "" {
-		cond := orm.NewCondition().And("Title__icontains", keyword).Or("Content__icontains", keyword)
+		cond := orm.NewCondition().And("Title__icontains", keyword).Or("Keywords__icontains", keyword).Or("Description__icontains", keyword)
 		op = op.SetCond(cond)
 	}
 

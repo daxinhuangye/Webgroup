@@ -201,14 +201,29 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
     	}
     	return false;
     };
-    
+    $scope.dataUrl = "";
     $scope.save = function() {
 
-		$http.post($scope.postUrl, $scope.editData).success(function(data, status, headers, config) {
-			if($filter("CheckError")(data)){
-				$modalInstance.close(data);
-			}
+		$("#ihtml img").each(function(){
+			console.log(this.src);
+			this.src = "/admin/public/getimg?Imgsrc="+this.src;
 		});
+
+		var node = document.getElementById('ihtml');
+		domtoimage.toPng(node).then(function (dataUrl) {
+			$scope.editData["Photo"] = dataUrl;
+			$scope.dataUrl = dataUrl;
+			$http.post($scope.postUrl, $scope.editData).success(function(data, status, headers, config) {
+				if($filter("CheckError")(data)){
+					$modalInstance.close(data);
+				}
+			});
+
+		}).catch(function (error) {
+			console.error('oops, something went wrong!', error);
+		});
+
+
 
     };
 
@@ -237,6 +252,8 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
 	/***********************数据定义*****************************/
 	$scope.attrDef = [
 		{"Key":"Title", "Title":"标题", "InputType":"text", "Required":"true"},
+		{"Key":"Keywords", "Title":"关键字", "InputType":"text", "Required":"false"},
+		{"Key":"Description", "Title":"简介", "InputType":"text", "Required":"false"},
 		{"Key":"Content", "Title":"内容", "InputType":"ueditor", "Required":"false", "Config":$scope._simpleConfig},
 		{"Key":"Type", "Title":"类型", "InputType":"radio", "Required":"true",  "Value":[[1,"HTML"],[2,"图片"]]},
 		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
@@ -290,7 +307,7 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
         modalInstance = $modal.open({
 			size: "lg",
 			backdrop: false,
-            templateUrl: "/static/page/modal/base.html",
+            templateUrl: "/static/page/modal/files_edit.html",
             controller: "FilesEditCtrl",
             resolve: {
             	curr_data: function () {
@@ -304,13 +321,13 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
 	
 	$scope.edit = function(id) {
 		
-		var url = appCfg.AppPrefix + "/domain/edit/" + id;
+		var url = appCfg.AppPrefix + "/files/edit/" + id;
 		$http.get(url).success(function(data, status, headers, config) {
 			if($filter("CheckError")(data)){
 				 modalInstance = $modal.open({
 					backdrop: false,
-		            templateUrl: "/static/page/modal/base.html",
-		            controller: "DomainEditCtrl",
+		            templateUrl: "/static/page/modal/files_edit.html",
+		            controller: "FilesEditCtrl",
 		            resolve: {
 		            	curr_data: function () {
 		                    return {"Op":"edit", "Data":data.Data};
@@ -326,9 +343,9 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
 	     
 
 	$scope.del = function(item) {
-		EzConfirm.create({heading: '域名删除', text: '确定删除域名“'+item.Name+'“吗？'}).then(function() {
+		EzConfirm.create({heading: '软文删除', text: '确定删除该软文吗？'}).then(function() {
         	var post = angular.copy(item);  
-			var url = appCfg.AppPrefix + "/domain/del";
+			var url = appCfg.AppPrefix + "/files/del";
 			$http.post(url, post).success(function(data, status, headers, config) {
 				if($filter("CheckError")(data)){
 					$scope.getList();
@@ -504,6 +521,15 @@ app.filter('FileSize', [function() {
     };  
 }]);
 
+;
+app.filter('Tohtml', ['$sce', function ($sce) {
+    return function (text) {
+        text = text || "";
+        console.log(text);
+       // text = text.replace(/<img src=\/?.*?>/g, '[图片名]', $1);
+        return $sce.trustAsHtml(text);
+    };
+}]);
 ;
 app.service('categoryService', ["$rootScope", "$http", "$filter", "appCfg", function($rootScope, $http, $filter, appCfg) {
 	var self = this;

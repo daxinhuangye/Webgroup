@@ -29,7 +29,7 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
         modalInstance = $modal.open({
 			size: "lg",
 			backdrop: false,
-            templateUrl: "/static/page/modal/base.html",
+            templateUrl: "/static/page/modal/files_edit.html",
             controller: "FilesEditCtrl",
             resolve: {
             	curr_data: function () {
@@ -43,13 +43,13 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
 	
 	$scope.edit = function(id) {
 		
-		var url = appCfg.AppPrefix + "/domain/edit/" + id;
+		var url = appCfg.AppPrefix + "/files/edit/" + id;
 		$http.get(url).success(function(data, status, headers, config) {
 			if($filter("CheckError")(data)){
 				 modalInstance = $modal.open({
 					backdrop: false,
-		            templateUrl: "/static/page/modal/base.html",
-		            controller: "DomainEditCtrl",
+		            templateUrl: "/static/page/modal/files_edit.html",
+		            controller: "FilesEditCtrl",
 		            resolve: {
 		            	curr_data: function () {
 		                    return {"Op":"edit", "Data":data.Data};
@@ -65,9 +65,9 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
 	     
 
 	$scope.del = function(item) {
-		EzConfirm.create({heading: '域名删除', text: '确定删除域名“'+item.Name+'“吗？'}).then(function() {
+		EzConfirm.create({heading: '软文删除', text: '确定删除该软文吗？'}).then(function() {
         	var post = angular.copy(item);  
-			var url = appCfg.AppPrefix + "/domain/del";
+			var url = appCfg.AppPrefix + "/files/del";
 			$http.post(url, post).success(function(data, status, headers, config) {
 				if($filter("CheckError")(data)){
 					$scope.getList();

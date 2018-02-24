@@ -32,14 +32,29 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
     	}
     	return false;
     };
-    
+    $scope.dataUrl = "";
     $scope.save = function() {
 
-		$http.post($scope.postUrl, $scope.editData).success(function(data, status, headers, config) {
-			if($filter("CheckError")(data)){
-				$modalInstance.close(data);
-			}
+		$("#ihtml img").each(function(){
+			console.log(this.src);
+			this.src = "/admin/public/getimg?Imgsrc="+this.src;
 		});
+
+		var node = document.getElementById('ihtml');
+		domtoimage.toPng(node).then(function (dataUrl) {
+			$scope.editData["Photo"] = dataUrl;
+			$scope.dataUrl = dataUrl;
+			$http.post($scope.postUrl, $scope.editData).success(function(data, status, headers, config) {
+				if($filter("CheckError")(data)){
+					$modalInstance.close(data);
+				}
+			});
+
+		}).catch(function (error) {
+			console.error('oops, something went wrong!', error);
+		});
+
+
 
     };
 
@@ -68,9 +83,10 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
 	/***********************数据定义*****************************/
 	$scope.attrDef = [
 		{"Key":"Title", "Title":"标题", "InputType":"text", "Required":"true"},
+		{"Key":"Keywords", "Title":"关键字", "InputType":"text", "Required":"false"},
+		{"Key":"Description", "Title":"简介", "InputType":"text", "Required":"false"},
 		{"Key":"Content", "Title":"内容", "InputType":"ueditor", "Required":"false", "Config":$scope._simpleConfig},
 		{"Key":"Type", "Title":"类型", "InputType":"radio", "Required":"true",  "Value":[[1,"HTML"],[2,"图片"]]},
-		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
 		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
 
 	];	

@@ -13,6 +13,23 @@ import (
 	"github.com/astaxie/beego/validation"
 )
 
+var (
+	template = `
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>%s</title>
+		<meta name="keywords" content="%s">
+		<meta name="description" content="%s">
+		</head>
+		<body>
+		%s
+		</body>
+		</html>
+	`
+)
+
 type FilesController struct {
 	BaseController
 }
@@ -51,6 +68,8 @@ func (this *FilesController) Add() {
 
 	o := models.Files{}
 	o.Title = this.GetString("Title")
+	o.Keywords = this.GetString("Keywords")
+	o.Description = this.GetString("Description")
 	o.Content = this.GetString("Content")
 	o.Sort, _ = this.GetInt64("Sort")
 	o.Time = tsTime.CurrSe()
@@ -80,18 +99,20 @@ func (this *FilesController) Add() {
 		this.TraceJson()
 	}
 
-	html := `
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
-<body>
-%s
-</body>
-</html>`
-	html = fmt.Sprintf(html, o.Content)
-	tsFile.WriteFile("./static/files/"+"1.html", html)
+	html := fmt.Sprintf(template, o.Title, o.Keywords, o.Description, o.Content)
+	path := fmt.Sprintf("./static/files/%d_1.html", o.Id)
+	tsFile.WriteFile(path, html)
+
+	photo := this.GetString("Photo")
+
+	if len(photo) > 255 {
+		temp := fmt.Sprintf("%d", o.Id)
+		filename, _ := tsFile.WriteImgFile2("./static/files/img/", temp, photo)
+		html = fmt.Sprintf(template, o.Title, o.Keywords, o.Description, `<img src="`+filename+`">`)
+		path = fmt.Sprintf("./static/files/%d_2.html", o.Id)
+		tsFile.WriteFile(path, html)
+	}
+
 	this.Code = 1
 	this.Result = o
 	this.TraceJson()

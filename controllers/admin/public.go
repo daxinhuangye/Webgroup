@@ -7,6 +7,7 @@ import (
 	_ "encoding/base64"
 	"fmt"
 	_ "strconv"
+	"time"
 	"tsEngine/tsCrypto"
 	"tsEngine/tsDb"
 	"tsEngine/tsFile"
@@ -14,11 +15,43 @@ import (
 	"tsEngine/tsTime"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/validation"
 )
 
 type PublicController struct {
 	controllers.BaseController
+}
+
+func (this *PublicController) Cross() {
+	data := `<?xml version="1.0"?>   
+<!DOCTYPE cross-domain-policy SYSTEM "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">   
+<cross-domain-policy> <site-control permitted-cross-domain-policies="all" />    
+    <allow-access-from domain="*" />    
+    <allow-http-request-headers-from domain="*" headers="*"/>  
+</cross-domain-policy> 
+`
+	this.Ctx.WriteString(data)
+
+}
+
+func (this *PublicController) GetImg() {
+	src := this.GetString("Imgsrc")
+	//创建链接
+	curl := httplib.Get(src)
+
+	//设置超时时间 2秒链接，3秒读数据
+	curl.SetTimeout(5*time.Second, 5*time.Second)
+
+	//获取请求的内容
+	temp, err := curl.Bytes()
+	if err != nil {
+		beego.Error(err)
+	}
+
+	content := string(temp)
+	this.Ctx.WriteString(content)
+
 }
 
 func (this *PublicController) Config() {
