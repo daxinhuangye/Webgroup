@@ -63,23 +63,27 @@
 						<table class="table table-hover">
 							<thead>
 							<tr>
-
+								<th width="80">编号</th>
 								<th>标题</th>
-								<th>排序</th>
-								<th>状态</th>
 								<th>备注</th>
-								<th width="85"><div>操作</div></th>
+								<th width="80">排序</th>
+								<th width="150">创建时间</th>
+								<th width="200"><div>操作</div></th>
 
 							</tr>
 							</thead>
 							<tbody>
 							<tr ng-repeat="item in listData.Items">
 
-								<td><span>{{item.Title}}</span></td>
-								<td><span>{{item.Sort}}</span></td>
-								<td><span>{{item.State}}</span></td>
+								<td>{{item.Id}}</td>
+								<td>{{item.Title}}</td>
 								<td><p>{{item.Note}}</p></td>
+								<td>{{item.Sort}}</td>
+								<td>{{item.Time * 1000 | date:'yyyy-MM-dd HH:mm'}}</td>
 								<td>
+									<a  href="/static/files/{{item.Id}}_1.html" target="_blank" class="btn btn-default btn-sm"  title="文本页面预览" tabindex="0"><i class="fa fa-file"></i></a>
+									<a  href="/static/files/{{item.Id}}_2.html" target="_blank" class="btn btn-default btn-sm"  title="图片页面预览" tabindex="0"><i class="fa fa-photo"></i></a>
+									
 									<button ng-if="checkPermission('files','edit')" type="button" class="btn btn-default btn-sm" ng-click="edit(item.Id)" title="编辑" tabindex="0"><i class="fa fa-pencil"></i></button>
 									<button ng-if="checkPermission('files','del')" type="button" class="btn btn-default btn-sm" ng-click="del(item)" title="删除" tabindex="0"><i class="fa fa-trash-o"></i></button>
 								</td>

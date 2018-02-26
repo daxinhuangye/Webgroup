@@ -47,6 +47,7 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
 		$http.get(url).success(function(data, status, headers, config) {
 			if($filter("CheckError")(data)){
 				 modalInstance = $modal.open({
+					size: "lg",
 					backdrop: false,
 		            templateUrl: "/static/page/modal/files_edit.html",
 		            controller: "FilesEditCtrl",
@@ -76,6 +77,6 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
 			});		  	
 		});
 	};
-	
+
 	$scope.getList();
 }]);

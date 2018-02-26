@@ -71,6 +71,7 @@ func (this *FilesController) Add() {
 	o.Keywords = this.GetString("Keywords")
 	o.Description = this.GetString("Description")
 	o.Content = this.GetString("Content")
+	o.Note = this.GetString("Note")
 	o.Sort, _ = this.GetInt64("Sort")
 	o.Time = tsTime.CurrSe()
 
@@ -143,9 +144,11 @@ func (this *FilesController) Edit() {
 	//获取post数据
 	o.Id, _ = this.GetInt64("Id")
 	o.Title = this.GetString("Title")
-	o.Sort, _ = this.GetInt64("Sort")
+	o.Keywords = this.GetString("Keywords")
+	o.Description = this.GetString("Description")
 	o.Content = this.GetString("Content")
-
+	o.Note = this.GetString("Note")
+	o.Sort, _ = this.GetInt64("Sort")
 	//****************************************************
 	//数据验证
 	valid := validation.Validation{}
@@ -164,7 +167,7 @@ func (this *FilesController) Edit() {
 	}
 
 	//****************************************************
-	err := db.DbUpdate(&o, "Title", "Content", "Sort")
+	err := db.DbUpdate(&o, "Title", "Keywords", "Description", "Content", "Note", "Sort")
 
 	if err != nil {
 		beego.Error(err)
@@ -172,7 +175,19 @@ func (this *FilesController) Edit() {
 		this.Msg = "参数错误或没有任何修改"
 		this.TraceJson()
 	}
+	html := fmt.Sprintf(template, o.Title, o.Keywords, o.Description, o.Content)
+	path := fmt.Sprintf("./static/files/%d_1.html", o.Id)
+	tsFile.WriteFile(path, html)
 
+	photo := this.GetString("Photo")
+
+	if len(photo) > 255 {
+		temp := fmt.Sprintf("%d", o.Id)
+		filename, _ := tsFile.WriteImgFile2("./static/files/img/", temp, photo)
+		html = fmt.Sprintf(template, o.Title, o.Keywords, o.Description, `<img src="`+filename+`">`)
+		path = fmt.Sprintf("./static/files/%d_2.html", o.Id)
+		tsFile.WriteFile(path, html)
+	}
 	this.Code = 1
 	this.Result = o
 	this.TraceJson()
@@ -190,7 +205,7 @@ func (this *FilesController) Del() {
 		this.Msg = "参数错误"
 		this.TraceJson()
 	}
-
+	id := o.Id
 	err = db.DbDel(&o)
 	if err != nil {
 		beego.Error(err)
@@ -198,6 +213,13 @@ func (this *FilesController) Del() {
 		this.Msg = "数据库异常错误，请联系管理员"
 		this.TraceJson()
 	}
+	path_1 := fmt.Sprintf("./static/files/%d_1.html", id)
+	path_2 := fmt.Sprintf("./static/files/%d_2.html", id)
+	path_3 := fmt.Sprintf("./static/files/img/%d.png", id)
+	beego.Trace(path_1)
+	tsFile.DelFile(path_1) //删除文件
+	tsFile.DelFile(path_2) //删除文件
+	tsFile.DelFile(path_3) //删除文件
 	this.Code = 1
 	this.TraceJson()
 

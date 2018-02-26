@@ -13,9 +13,9 @@ type Files struct {
 	Keywords    string
 	Description string
 	Content     string
+	Note        string
 	Time        uint64
 	Sort        int64
-	State       int64
 }
 
 func init() {

@@ -86,7 +86,7 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
 		{"Key":"Keywords", "Title":"关键字", "InputType":"text", "Required":"false"},
 		{"Key":"Description", "Title":"简介", "InputType":"text", "Required":"false"},
 		{"Key":"Content", "Title":"内容", "InputType":"ueditor", "Required":"false", "Config":$scope._simpleConfig},
-		{"Key":"Type", "Title":"类型", "InputType":"radio", "Required":"true",  "Value":[[1,"HTML"],[2,"图片"]]},
+		{"Key":"Note", "Title":"备注", "InputType":"textarea", "Required":"false"},
 		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
 
 	];	
