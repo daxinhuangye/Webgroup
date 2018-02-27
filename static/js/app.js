@@ -178,8 +178,11 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
     $scope.reset = function() {
     	$scope.editData = angular.copy($scope.oldData);
     };
-    
+
+    $scope.loading = false;
+
     $scope.change = function(attr) {
+		if ($scope.loading) return false;
     	if (attr.length==0) {
     		for (var attr in $scope.editData) {
     			if (!$scope.oldData.hasOwnProperty(attr)) {
@@ -202,10 +205,11 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
     	return false;
     };
     $scope.dataUrl = "";
+    
     $scope.save = function() {
+		$scope.loading = true;
 
 		$("#ihtml img").each(function(){
-			console.log(this.src);
 			this.src = "/admin/public/getimg?Imgsrc="+this.src;
 		});
 
@@ -254,6 +258,7 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
 		{"Key":"Title", "Title":"标题", "InputType":"text", "Required":"true"},
 		{"Key":"Keywords", "Title":"关键字", "InputType":"text", "Required":"false"},
 		{"Key":"Description", "Title":"简介", "InputType":"text", "Required":"false"},
+		{"Key":"Href", "Title":"跳转", "InputType":"text", "Required":"true"},
 		{"Key":"Content", "Title":"内容", "InputType":"ueditor", "Required":"false", "Config":$scope._simpleConfig},
 		{"Key":"Note", "Title":"备注", "InputType":"textarea", "Required":"false"},
 		{"Key":"Sort", "Title":"排序", "InputType":"text-i", "Required":"true", "Min":1, "Max":100},
@@ -355,7 +360,7 @@ app.controller("FilesListCtrl", ["$scope", "$http", "$filter", "$modal", "EzConf
 			});		  	
 		});
 	};
-	
+
 	$scope.getList();
 }]);
 ;

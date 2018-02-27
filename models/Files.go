@@ -12,6 +12,7 @@ type Files struct {
 	Title       string
 	Keywords    string
 	Description string
+	Href        string
 	Content     string
 	Note        string
 	Time        uint64

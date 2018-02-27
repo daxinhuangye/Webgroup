@@ -4,6 +4,7 @@ package controllers
 import (
 	"Webgroup/models"
 	"fmt"
+	"strings"
 	"tsEngine/tsDb"
 	"tsEngine/tsFile"
 	"tsEngine/tsString"
@@ -70,6 +71,10 @@ func (this *FilesController) Add() {
 	o.Title = this.GetString("Title")
 	o.Keywords = this.GetString("Keywords")
 	o.Description = this.GetString("Description")
+	o.Href = this.GetString("Href")
+	if o.Href != "" && !strings.Contains(o.Href, "http://") && !strings.Contains(o.Href, "https://") {
+		o.Href = "http://" + o.Href
+	}
 	o.Content = this.GetString("Content")
 	o.Note = this.GetString("Note")
 	o.Sort, _ = this.GetInt64("Sort")
@@ -79,7 +84,7 @@ func (this *FilesController) Add() {
 	valid := validation.Validation{}
 
 	valid.Required(o.Title, "Title").Message("标题不能为空")
-
+	valid.Required(o.Href, "Href").Message("跳转地址不能为空")
 	if valid.HasErrors() {
 		// 如果有错误信息，证明验证没通过
 		// 打印错误信息
@@ -109,7 +114,11 @@ func (this *FilesController) Add() {
 	if len(photo) > 255 {
 		temp := fmt.Sprintf("%d", o.Id)
 		filename, _ := tsFile.WriteImgFile2("./static/files/img/", temp, photo)
-		html = fmt.Sprintf(template, o.Title, o.Keywords, o.Description, `<img src="`+filename+`">`)
+		img_html := `<img src="` + filename + `">`
+		if o.Href != "" {
+			img_html = fmt.Sprintf(`<a  href="%s"> %s </a>`, o.Href, img_html)
+		}
+		html = fmt.Sprintf(template, o.Title, o.Keywords, o.Description, img_html)
 		path = fmt.Sprintf("./static/files/%d_2.html", o.Id)
 		tsFile.WriteFile(path, html)
 	}
@@ -146,6 +155,10 @@ func (this *FilesController) Edit() {
 	o.Title = this.GetString("Title")
 	o.Keywords = this.GetString("Keywords")
 	o.Description = this.GetString("Description")
+	o.Href = this.GetString("Href")
+	if o.Href != "" && !strings.Contains(o.Href, "http://") && !strings.Contains(o.Href, "https://") {
+		o.Href = "http://" + o.Href
+	}
 	o.Content = this.GetString("Content")
 	o.Note = this.GetString("Note")
 	o.Sort, _ = this.GetInt64("Sort")
@@ -154,6 +167,7 @@ func (this *FilesController) Edit() {
 	valid := validation.Validation{}
 
 	valid.Required(o.Title, "Title").Message("标题不能为空")
+	valid.Required(o.Href, "Href").Message("跳转地址不能为空")
 
 	if valid.HasErrors() {
 		// 如果有错误信息，证明验证没通过
@@ -167,7 +181,7 @@ func (this *FilesController) Edit() {
 	}
 
 	//****************************************************
-	err := db.DbUpdate(&o, "Title", "Keywords", "Description", "Content", "Note", "Sort")
+	err := db.DbUpdate(&o, "Title", "Keywords", "Description", "Href", "Content", "Note", "Sort")
 
 	if err != nil {
 		beego.Error(err)
@@ -184,7 +198,13 @@ func (this *FilesController) Edit() {
 	if len(photo) > 255 {
 		temp := fmt.Sprintf("%d", o.Id)
 		filename, _ := tsFile.WriteImgFile2("./static/files/img/", temp, photo)
-		html = fmt.Sprintf(template, o.Title, o.Keywords, o.Description, `<img src="`+filename+`">`)
+
+		img_html := `<img src="` + filename + `">`
+		if o.Href != "" {
+			img_html = fmt.Sprintf(`<a  href="%s"> %s </a>`, o.Href, img_html)
+		}
+
+		html = fmt.Sprintf(template, o.Title, o.Keywords, o.Description, img_html)
 		path = fmt.Sprintf("./static/files/%d_2.html", o.Id)
 		tsFile.WriteFile(path, html)
 	}
