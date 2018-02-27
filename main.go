@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Webgroup/controllers"
 	"Webgroup/models"
 	_ "Webgroup/routers"
 	"tsEngine/tsDb"
@@ -32,6 +33,9 @@ func main() {
 	beego.SetLogger("file", `{"filename":"./logs/logs.log"}`)
 	//beego.SetLevel(beego.LevelInformational)
 	beego.SetLogFuncCall(true)
+
+	//404 等错误处理
+	beego.ErrorController(&controllers.ErrorController{})
 
 	if beego.AppConfig.String("runmode") == "dev" {
 		orm.Debug = true

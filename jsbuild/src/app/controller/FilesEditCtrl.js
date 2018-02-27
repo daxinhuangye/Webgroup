@@ -36,8 +36,8 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
     	return false;
     };
     $scope.dataUrl = "";
-    
-    $scope.save = function() {
+
+	$scope.save = function() {
 		$scope.loading = true;
 
 		$("#ihtml img").each(function(){
@@ -58,8 +58,31 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
 			console.error('oops, something went wrong!', error);
 		});
 
+	};
 
+	$scope.iframeLoadedCallBack = function(){
+		console.log(88888888888);
+		$("#ihtml")[0].contentWindow.createImg();
+	};
 
+    $scope.save2 = function() {
+
+		$scope.loading = true;
+
+		//$scope.iframeUrl = "/files/createiframe?content=" + $scope.editData["Content"];
+
+		var doc = document.getElementById("ihtml").contentDocument || document.frames["ihtml"].document;
+		//$("#ihtmlBody", doc).html($scope.editData["Content"]);
+
+		doc.body.innerHTML = $scope.editData["Content"];
+		/*
+		$("#ihtmlBody img", doc).each(function(){
+			this.src = "/admin/public/getimg?Imgsrc="+this.src;
+			//this.src = "/static/img/user6.png";
+		});
+
+		//$("#ihtml")[0].contentWindow.createImg();
+		*/
     };
 
 	$scope._simpleConfig = {

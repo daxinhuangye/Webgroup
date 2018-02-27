@@ -205,8 +205,8 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
     	return false;
     };
     $scope.dataUrl = "";
-    
-    $scope.save = function() {
+
+	$scope.save = function() {
 		$scope.loading = true;
 
 		$("#ihtml img").each(function(){
@@ -227,8 +227,31 @@ app.controller("FilesEditCtrl", ["$scope", "$http", "$filter", "$modalInstance",
 			console.error('oops, something went wrong!', error);
 		});
 
+	};
 
+	$scope.iframeLoadedCallBack = function(){
+		console.log(88888888888);
+		$("#ihtml")[0].contentWindow.createImg();
+	};
 
+    $scope.save2 = function() {
+
+		$scope.loading = true;
+
+		//$scope.iframeUrl = "/files/createiframe?content=" + $scope.editData["Content"];
+
+		var doc = document.getElementById("ihtml").contentDocument || document.frames["ihtml"].document;
+		//$("#ihtmlBody", doc).html($scope.editData["Content"]);
+
+		doc.body.innerHTML = $scope.editData["Content"];
+		/*
+		$("#ihtmlBody img", doc).each(function(){
+			this.src = "/admin/public/getimg?Imgsrc="+this.src;
+			//this.src = "/static/img/user6.png";
+		});
+
+		//$("#ihtml")[0].contentWindow.createImg();
+		*/
     };
 
 	$scope._simpleConfig = {
@@ -400,6 +423,18 @@ app.directive("flotChartRealtime", [function () {
     }
 }]);
 ;
+app.directive('iframeOnload', [function(){
+    return {
+        scope: {
+            callBack: '&iframeOnload'
+        },
+        link: function(scope, element, attrs){
+            element.on('load', function(){
+                return scope.callBack();
+            })
+        }
+    }}])
+;
 app.directive("morrisChart", [function () {
     return {
         restrict: "A", scope: {data: "=", type: "=", options: "="}, link: function (scope, ele) {
@@ -531,8 +566,6 @@ app.filter('FileSize', [function() {
 app.filter('Tohtml', ['$sce', function ($sce) {
     return function (text) {
         text = text || "";
-        console.log(text);
-       // text = text.replace(/<img src=\/?.*?>/g, '[图片名]', $1);
         return $sce.trustAsHtml(text);
     };
 }]);
